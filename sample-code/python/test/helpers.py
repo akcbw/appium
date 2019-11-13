@@ -6,10 +6,10 @@ from sauceclient import SauceClient
 
 
 ANDROID_BASE_CAPS = {
-    'app': os.path.abspath('../apps/ApiDemos-debug.apk'),
-    'automationName': 'UIAutomator2',
+    'app': os.path.abspath('../../apps/ApiDemos-debug.apk'),
+    'automationName': 'UIAutomator2',  #  UIAutomator2 only supports Android 5.0+
     'platformName': 'Android',
-    'platformVersion': os.getenv('ANDROID_PLATFORM_VERSION') or '8.0',
+#    'platformVersion': os.getenv('ANDROID_PLATFORM_VERSION') or '8.0',
     'deviceName': os.getenv('ANDROID_DEVICE_VERSION') or 'Android Emulator',
 }
 
@@ -60,7 +60,8 @@ def __save_log_type(driver, device_logger, calling_request, type):
     screenshot_dir = device_logger.screenshot_dir
 
     try:
-        driver.save_screenshot(os.path.join(screenshot_dir, calling_request + '.png'))
+        # Google android emulator will be dead after screenshot. Perhaps we could try 3rd party emulator
+#        driver.save_screenshot(os.path.join(screenshot_dir, calling_request + '.png'))
         logcat_data = driver.get_log(type)
     except InvalidSessionIdException:
         logcat_data = ''
@@ -70,7 +71,11 @@ def __save_log_type(driver, device_logger, calling_request, type):
             data_string = '%s:  %s\n' % (data['timestamp'], data['message'].encode('utf-8'))
             logcat_file.write(data_string)
 
+# We do not use sauce, disable
 def report_to_sauce(session_id):
+    pass
+    '''
     print("Link to your job: https://saucelabs.com/jobs/%s" % session_id)
     passed = str(sys.exc_info() == (None, None, None))
     sauce.jobs.update_job(session_id, passed=passed)
+    '''
